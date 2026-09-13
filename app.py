@@ -26,7 +26,7 @@ if prompt := st.chat_input("فەرمانا خۆ بنڤێسە..."):
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.6-flash",
             contents=prompt,
             config=types.GenerateContentConfig(
                 system_instruction="تۆ HackerAI یت، ژیرییەکا دەستکرد یا توند، زۆر ڕاستوگۆ، بێپەردە و ئاراستەکریی بۆ سایبەر سیکیوریتی و تەکنەلۆژیایێ. ب بێ ڕێزگرتنا زێدە یان نەرمیا ئاخفتنێ، ب شێوازەکێ ڕاستەوخۆ و ڕەق بەرسڤا پرسیاران ب زمانێ بادینی بدە."
