@@ -1,6 +1,5 @@
 import time
 import streamlit as st
-import streamlit.components.v1 as components
 from google import genai
 from google.genai import types
 
@@ -11,126 +10,84 @@ st.set_page_config(
     layout="wide"
 )
 
-# 🔗 بەستەرێن وێنەیان (تە دشی لۆگۆیا نوو ل ڤێرێ دانێ)
-NEW_LOGO = "https://raw.githubusercontent.com/wikipedia/commons/d/d4/Kurdistan_Regional_Government_Coat_of_arms.jpg"
-CT_LOGO = "https://upload.wikimedia.org/wikipedia/commons/5/50/CTU_Kurdistan.jpg"
-SKULL_GIF = "https://i.pinimg.com/originals/30/ca/87/30ca877eb4bd1e5c3e7e22df72120464.gif"
-
-# 2. دروستکرنا بەگراوندا لڤلڤۆک ب JavaScript (Matrix Digital Rain)
-matrix_code = """
-<style>
-    body { margin: 0; overflow: hidden; background: black; }
-    canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
-</style>
-<canvas id="matrix"></canvas>
-<script>
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const letters = '0110100101010101010101';
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-
-    function draw() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = '#ff1111';
-        ctx.font = fontSize + 'px monospace';
-
-        for (let i = 0; i < drops.length; i++) {
-            const text = letters.charAt(Math.floor(Math.random() * letters.length));
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                drops[i] = 0;
-            }
-            drops[i]++;
-        }
-    }
-    setInterval(draw, 33);
-</script>
-"""
-components.html(matrix_code, height=0)
-
-# 3. دیزاینا CSS بۆ لۆگۆ و شاشێ
-st.markdown(f"""
+# 2. دیزاینا بەگراوندێ ڕەنگێ تاریک و تۆڕا هەکینگێ (PentestGPT Grid Style)
+st.markdown("""
     <style>
-    .stApp {{
-        background: transparent;
+    /* بەگراوندێ سەرەکی ب شێوازێ PentestGPT Grid Pattern */
+    .stApp {
+        background-color: #080808;
+        background-image: 
+            linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
+        background-size: 30px 30px;
         color: #ffffff;
-    }}
+        font-family: 'Courier New', Courier, monospace;
+    }
 
-    .custom-header {{
+    /* ڕێکخستنا سەر دگەل لۆگۆیێ ڕاستەقینە یێ SVG */
+    .custom-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: rgba(15, 0, 0, 0.85);
-        padding: 12px 20px;
-        border-radius: 15px;
-        border: 1px solid rgba(255, 0, 0, 0.5);
-        box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-        margin-bottom: 20px;
-    }}
-    
-    .header-center {{
+        background: rgba(15, 15, 15, 0.9);
+        padding: 15px 25px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 255, 65, 0.2);
+        box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+        margin-bottom: 25px;
+    }
+
+    .header-title {
+        color: #00ff41;
+        font-weight: bold;
+        font-size: 22px;
+        text-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
+        margin: 0;
         text-align: center;
-        flex-grow: 1;
-    }}
+    }
+
+    /* شێوازێ دیزاینا چاتێ */
+    .stChatMessage {
+        background-color: rgba(18, 18, 18, 0.95) !important;
+        border: 1px solid rgba(0, 255, 65, 0.15) !important;
+        border-radius: 10px !important;
+    }
     
-    .main-logo {{
-        height: 70px;
-        mix-blend-mode: lighten;
-    }}
-
-    .ct-img {{
-        height: 65px;
-        border-radius: 50%;
-        mix-blend-mode: lighten;
-    }}
-
-    .stChatMessage {{
-        background-color: rgba(15, 5, 5, 0.9) !important;
-        border: 1px solid rgba(255, 0, 0, 0.3) !important;
-        border-radius: 12px !important;
-    }}
+    /* شێوازێ بەشێ نڤێسینێ */
+    .stChatInput {
+        border-color: rgba(0, 255, 65, 0.3) !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# 4. ئەنیمەیشنا سەرەتایی (Skull Animation) بۆ ماوەی ٧ چڵکان (7 Seconds)
+# 3. ئەنیمەیشنا سەرەتایی (Skull Animation) بۆ ماوەی ٧ سانیان
 if "loaded" not in st.session_state:
     loading_placeholder = st.empty()
     with loading_placeholder.container():
-        st.markdown(f"""
-            <div style="text-align: center; margin-top: 100px;">
-                <img src="{SKULL_GIF}" width="250" style="mix-blend-mode: lighten; filter: drop-shadow(0 0 15px red);">
-                <h2 style="color: #ff3333; font-family: monospace; margin-top: 15px;">د پێناڤا بارکرنا سیستەمی دا...</h2>
+        st.markdown("""
+            <div style="text-align: center; margin-top: 120px;">
+                <div style="font-size: 100px; filter: drop-shadow(0 0 20px #00ff41); margin-bottom: 10px;">☠️</div>
+                <h2 style="color: #00ff41; font-family: monospace;">SYSTEM INITIALIZING...</h2>
+                <p style="color: #888888;">د پێناڤا بارکرنا سیستەمی دا (7 Seconds)...</p>
             </div>
         """, unsafe_allow_html=True)
-        time.sleep(7)  # ⏱️ ٧ سانیێن ڕاستەقینە
+        time.sleep(7)
     st.session_state.loaded = True
     loading_placeholder.empty()
 
-# 5. بەشێ سەری (Header دگەل لۆگۆیێ چەپێ و ناڤەڕاستێ)
-st.markdown(f"""
+# 4. بەشێ سەری (Header دگەل ئایکۆنێن ب بێ بەگراوند)
+st.markdown("""
     <div class="custom-header">
+        <div style="font-size: 35px; filter: drop-shadow(0 0 5px #00ff41);">🦅</div>
         <div>
-            <img src="{CT_LOGO}" class="ct-img" alt="CT Unit">
+            <h2 class="header-title">&lt; PENTEST_GPT Kurdish /&gt;</h2>
+            <div style="text-align: center; color: #888888; font-size: 12px; margin-top: 4px;">حکومەتا هەرێما کوردستانێ</div>
         </div>
-        <div class="header-center">
-            <img src="{NEW_LOGO}" class="main-logo" alt="Main Logo">
-        </div>
-        <div style="width: 65px;"></div>
+        <div style="font-size: 35px; filter: drop-shadow(0 0 5px #00ff41);">🛡️</div>
     </div>
 """, unsafe_allow_html=True)
 
-st.title("🛡️ PentestAI Assistant")
-
-# 6. گرێدانا Gemini API
+# 5. گرێدانا Gemini API
 api_key = st.secrets.get("GEMINI_API_KEY")
 if not api_key:
     st.error("تکایە کلیلا GEMINI_API_KEY د بەشێ Secrets دا تۆمار بکە.")
@@ -140,7 +97,7 @@ client = genai.Client(api_key=api_key)
 
 PENTEST_INSTRUCTION = """
 You are PentestGPT, a specialized cybersecurity and penetration testing assistant.
-Provide clear technical responses in Badini Kurdish dialect.
+Provide technical responses in Badini Kurdish dialect.
 """
 
 if "messages" not in st.session_state:
@@ -156,7 +113,7 @@ if prompt := st.chat_input("فەرمان یان پرسیارەکێ بنڤێسە.
 
     try:
         response = client.models.generate_content(
-            model="gemini-3.6-flash",
+            model="gemini-2.0-flash",
             contents=prompt,
             config=types.GenerateContentConfig(
                 system_instruction=PENTEST_INSTRUCTION
