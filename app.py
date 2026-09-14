@@ -10,35 +10,38 @@ st.set_page_config(
     layout="wide"
 )
 
-# بەستەرێن وێنەیان ژ سێرڤەرێن باوەڕپێکراو
-KRG_LOGO = "https://raw.githubusercontent.com/wikipedia/commons/d/d4/Kurdistan_Regional_Government_Coat_of_arms.svg"
+KRG_LOGO = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Kurdistan_Regional_Government_Coat_of_arms.svg/1200px-Kurdistan_Regional_Government_Coat_of_arms.svg.png"
 CT_LOGO = "https://upload.wikimedia.org/wikipedia/commons/5/50/CTU_Kurdistan.jpg"
+SKULL_GIF = "https://i.pinimg.com/originals/30/ca/87/30ca877eb4bd1e5c3e7e22df72120464.gif"
 
-# 2. دیزاینا بەگراوند و ڕوویێ ئەپێ ب CSS یێ پێشکەوتی
+# 2. دیزاینا بەگراوندێ لڤلڤۆک و پاککرنا بەگراوندێ سپی یێ لۆگۆیان ب CSS
 st.markdown(f"""
     <style>
-    /* بەگراوندێ ڕەبتا تۆڕا تاریک و سوور */
+    /* بەگراوندێ سەرەکی یێ لڤلڤۆک (Animated Gradient + Binary Effect) */
     .stApp {{
-        background-color: #0d0202;
-        background-image: 
-            radial-gradient(at 50% 0%, rgba(180, 0, 0, 0.35) 0px, transparent 75%),
-            radial-gradient(at 100% 100%, rgba(100, 0, 0, 0.3) 0px, transparent 50%),
-            radial-gradient(at 0% 100%, rgba(150, 0, 0, 0.2) 0px, transparent 50%);
-        background-attachment: fixed;
+        background: linear-gradient(-45deg, #0a0000, #2b0000, #150000, #000000);
+        background-size: 400% 400%;
+        animation: gradientBG 10s ease infinite;
         color: #ffffff;
     }}
-    
+
+    @keyframes gradientBG {{
+        0% {{ background-position: 0% 50%; }}
+        50% {{ background-position: 100% 50%; }}
+        100% {{ background-position: 0% 50%; }}
+    }}
+
     /* ڕێکخستنا هێدرێ سەری */
     .custom-header {{
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: rgba(18, 5, 5, 0.85);
-        padding: 15px 20px;
+        background: rgba(10, 0, 0, 0.65);
+        padding: 12px 20px;
         border-radius: 15px;
-        border: 1px solid rgba(255, 30, 30, 0.4);
-        box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
-        margin-bottom: 25px;
+        border: 1px solid rgba(255, 0, 0, 0.4);
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        margin-bottom: 20px;
     }}
     
     .header-center {{
@@ -46,23 +49,26 @@ st.markdown(f"""
         flex-grow: 1;
     }}
     
+    /* لۆگۆیا حکومەتێ ب بێ بەگراوند */
     .krg-img {{
-        height: 60px;
-        margin-bottom: 5px;
+        height: 65px;
+        background: transparent;
+        mix-blend-mode: screen; /* لادانا سپیاتیێ */
     }}
 
+    /* لۆگۆیا دژەتیرۆر ب بێ بەگراوندی سپی */
     .ct-img {{
         height: 65px;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 0, 0, 0.5);
+        border-radius: 50%;
+        mix-blend-mode: lighten; /* لادانا سپیاتیێ د لۆگۆیێ دا */
+        background: transparent;
     }}
 
-    /* شێوازێ دیزاینا نامەیان */
+    /* شێوازێ دیزاینا چاتێ */
     .stChatMessage {{
-        background-color: rgba(20, 8, 8, 0.9) !important;
+        background-color: rgba(15, 5, 5, 0.85) !important;
         border: 1px solid rgba(255, 0, 0, 0.25) !important;
         border-radius: 12px !important;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }}
     </style>
 """, unsafe_allow_html=True)
@@ -71,13 +77,13 @@ st.markdown(f"""
 if "loaded" not in st.session_state:
     loading_placeholder = st.empty()
     with loading_placeholder.container():
-        st.markdown("""
-            <div style="text-align: center; margin-top: 120px;">
-                <div style="font-size: 90px; filter: drop-shadow(0 0 15px red);">☠️</div>
+        st.markdown(f"""
+            <div style="text-align: center; margin-top: 100px;">
+                <img src="{SKULL_GIF}" width="250" style="border-radius: 15px; mix-blend-mode: lighten;">
                 <h2 style="color: #ff3333; font-family: monospace; margin-top: 15px;">د پێناڤا بارکرنا سیستەمی دا...</h2>
             </div>
         """, unsafe_allow_html=True)
-        time.sleep(2)
+        time.sleep(2.5)
     st.session_state.loaded = True
     loading_placeholder.empty()
 
@@ -89,7 +95,7 @@ st.markdown(f"""
         </div>
         <div class="header-center">
             <img src="{KRG_LOGO}" class="krg-img" alt="KRG Logo"><br>
-            <strong style="color: #ffb700; font-size: 20px;">حکومەتا هەرێما کوردستانێ</strong>
+            <strong style="color: #ffb700; font-size: 18px;">حکومەتا هەرێما کوردستانێ</strong>
         </div>
         <div style="width: 65px;"></div>
     </div>
@@ -123,7 +129,7 @@ if prompt := st.chat_input("فەرمان یان پرسیارەکێ بنڤێسە.
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-3.6-flash",
             contents=prompt,
             config=types.GenerateContentConfig(
                 system_instruction=PENTEST_INSTRUCTION
