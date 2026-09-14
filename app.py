@@ -9,7 +9,7 @@ st.set_page_config(
     page_icon="🛡️",
     layout="wide"
 )
-
+‏CT_LOGO = "https://upload.wikimedia.org/wikipedia/commons/5/50/CTU_Kurdistan.jpg"
 # 2. دیزاینا بەگراوندێ ڕەنگێ تاریک و تۆڕا هەکینگێ (PentestGPT Grid Style)
 st.markdown("""
     <style>
