@@ -111,7 +111,7 @@ if prompt := st.chat_input("فەرمان یان پرسیارەکێ بنڤێسە.
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-3.6-flash",
             contents=prompt,
             config=types.GenerateContentConfig(
                 system_instruction=PENTEST_INSTRUCTION
