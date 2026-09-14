@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # 🔗 بەستەرێن وێنەیان (تە دشی لۆگۆیا نوو ل ڤێرێ دانێ)
-NEW_LOGO = "https://raw.githubusercontent.com/wikipedia/commons/d/d4/Kurdistan_Regional_Government_Coat_of_arms.svg"
+NEW_LOGO = "https://raw.githubusercontent.com/wikipedia/commons/d/d4/Kurdistan_Regional_Government_Coat_of_arms.jpg"
 CT_LOGO = "https://upload.wikimedia.org/wikipedia/commons/5/50/CTU_Kurdistan.jpg"
 SKULL_GIF = "https://i.pinimg.com/originals/30/ca/87/30ca877eb4bd1e5c3e7e22df72120464.gif"
 
