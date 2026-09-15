@@ -1,2 +1,2 @@
 # badini-ai
-Badini AI App
+ئاشانسی هەواڵگێری
