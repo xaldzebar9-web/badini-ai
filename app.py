@@ -1,5 +1,6 @@
 import time
 import streamlit as st
+import streamlit.components.v1 as components
 from google import genai
 from google.genai import types
 
@@ -10,10 +11,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# 2. دیزاینا بەگراوندێ ڕەنگێ تاریک و تۆڕا هەکینگێ (PentestGPT Grid Style)
+# 2. دیزاینا بەگراوندێ ڕەنگێ تاریک و تۆڕا هەکینگێ (Grid Style)
 st.markdown("""
     <style>
-    /* بەگراوندێ سەرەکی ب شێوازێ PentestGPT Grid Pattern */
     .stApp {
         background-color: #080808;
         background-image: 
@@ -24,7 +24,6 @@ st.markdown("""
         font-family: 'Courier New', Courier, monospace;
     }
 
-    /* ڕێکخستنا سەر دگەل لۆگۆیێ ڕاستەقینە یێ SVG */
     .custom-header {
         display: flex;
         align-items: center;
@@ -46,36 +45,59 @@ st.markdown("""
         text-align: center;
     }
 
-    /* شێوازێ دیزاینا چاتێ */
     .stChatMessage {
         background-color: rgba(18, 18, 18, 0.95) !important;
         border: 1px solid rgba(0, 255, 65, 0.15) !important;
         border-radius: 10px !important;
     }
     
-    /* شێوازێ بەشێ نڤێسینێ */
-    .stChatInput {
-        border-color: rgba(0, 255, 65, 0.3) !important;
+    .stButton > button {
+        background-color: #ff1111 !important;
+        color: white !important;
+        font-weight: bold !important;
+        border-radius: 8px !important;
+        border: 1px solid #ff5555 !important;
+        padding: 10px 25px !important;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. ئەنیمەیشنا سەرەتایی (Skull Animation) بۆ ماوەی ٧ سانیان
-if "loaded" not in st.session_state:
-    loading_placeholder = st.empty()
-    with loading_placeholder.container():
-        st.markdown("""
-            <div style="text-align: center; margin-top: 120px;">
-                <div style="font-size: 100px; filter: drop-shadow(0 0 20px #00ff41); margin-bottom: 10px;">☠️</div>
-                <h2 style="color: #00ff41; font-family: monospace;">SYSTEM INITIALIZING...</h2>
-                <p style="color: #888888;">د پێناڤا بارکرنا سیستەمی دا (7 Seconds)...</p>
-            </div>
-        """, unsafe_allow_html=True)
-        time.sleep(7)
-    st.session_state.loaded = True
-    loading_placeholder.empty()
+# 3. بەشێ دەستپێکرن و لۆدینگێ ب دەنگ
+if "system_started" not in st.session_state:
+    st.session_state.system_started = False
 
-# 4. بەشێ سەری (Header دگەل ئایکۆنێن ب بێ بەگراوند)
+if not st.session_state.system_started:
+    st.markdown("""
+        <div style="text-align: center; margin-top: 100px;">
+            <div style="font-size: 90px; filter: drop-shadow(0 0 20px #ff0000); margin-bottom: 10px;">☠️</div>
+            <h2 style="color: #ff3333; font-family: monospace;">سیستەم د ئامادەباشیێ دا یە</h2>
+            <p style="color: #888888;">بۆ کارێنانی دەنگی و کارپێکرنا ئەپێ کلیک ل سەر دوگمەیا خوارێ بکە</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("🚀 دۆخێ دەستپێکرنا سیستەمی", use_container_width=True):
+            # کارپێکرنا دەنگی ب ڕێکا Web Speech API
+            components.html("""
+                <script>
+                    var msg = new SpeechSynthesisUtterance("بەخێربێی بۆ ئاژانسی هەواڵگێری");
+                    msg.lang = "ckb";
+                    msg.rate = 0.9;
+                    window.speechSynthesis.speak(msg);
+                </script>
+            """, height=0)
+            
+            # نیشاندانا ڕاگەیاندنا لۆدینگێ بۆ ماوەی ٧ سانیان
+            with st.spinner("د پێناڤا بارکرنا سیستەمی دا (7 Seconds)..."):
+                time.sleep(7)
+                
+            st.session_state.system_started = True
+            st.rerun()
+    st.stop()
+
+# 4. بەشێ سەری (Header)
 st.markdown("""
     <div class="custom-header">
         <div style="font-size: 35px; filter: drop-shadow(0 0 5px #00ff41);">🦅</div>
@@ -113,7 +135,7 @@ if prompt := st.chat_input("فەرمان یان پرسیارەکێ بنڤێسە.
 
     try:
         response = client.models.generate_content(
-            model="gemini-3.6-flash",
+            model="gemini-2.0-flash",
             contents=prompt,
             config=types.GenerateContentConfig(
                 system_instruction=PENTEST_INSTRUCTION
